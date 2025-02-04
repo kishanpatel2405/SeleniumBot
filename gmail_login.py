@@ -4,8 +4,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 
-username = "kishan.vaghasiya122822@marwadiuniversity.ac.in"
-password = "Ynnb@898"
+username = "kisasnd@gmail.com"
+password = "9876534"
 
 options = webdriver.ChromeOptions()
 options.add_experimental_option('detach', True)
