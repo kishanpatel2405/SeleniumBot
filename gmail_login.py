@@ -1,49 +1,53 @@
-import time
-
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
-from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
 
-# Setup Chrome options to
-# Disable the "enable-automation" flag.
-# Add the "no-sandbox" argument.
-# Add the "disable-infobars" argument.
-# Add the "disable-dev-shm-usage" argument.
+username = "kishan.vaghasiya122822@marwadiuniversity.ac.in"
+password = "Ynnb@898"
 
-chrome_options = Options()
-chrome_options.add_argument("--disable-blink-features=AutomationControlled")
-chrome_options.add_argument("--no-sandbox")
-chrome_options.add_argument("--disable-infobars")
-chrome_options.add_argument("--disable-dev-shm-usage")
+options = webdriver.ChromeOptions()
+options.add_experimental_option('detach', True)
 
-# Set the driver
-webdriver_service = Service(ChromeDriverManager().install())
-driver = webdriver.Chrome(service=webdriver_service, options=chrome_options)
+url = "https://workspace.google.com/intl/en-US/gmail/"
 
-# test open google website
-driver.get('https://www.google.com')
-time.sleep(5)
+# Initialize the WebDriver
+driver = webdriver.Chrome(options=options)
 
-# navigate to login gmail
-driver.get(
-    "https://accounts.google.com/v3/signin/identifier?continue=https%3A%2F%2Fmail.google.com%2Fmail%2F&hl=en&service=mail&flowName=GlifWebSignIn&flowEntry=AddSession")
+try:
+    print("Navigating to the Google Workspace page...")
+    driver.get(url)
 
-# Identify the user name text box and enter the value
-driver.find_element(By.ID, "identifierId").send_keys("parlayyarsu@gmail.com")
-time.sleep(2)
+    # Wait for the "Sign in" button to be clickable and click it
+    print("Waiting for 'Sign in' button to be clickable...")
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, "//span[@class='button button__label']"))).click()
+    print("Clicked 'Sign in' button.")
 
-# Clicks on the 'Next' button and waits for 2 seconds.
-driver.find_element(By.XPATH, "//span[text()='Next']").click()
-time.sleep(2)
+    print("Waiting for username field to be present...")
+    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "identifierId")))
+    driver.find_element(By.ID, "identifierId").send_keys(username)
+    print("Entered username.")
 
-driver.find_element(By.XPATH, '//input[@name="Passwd"]').send_keys("California2023@#$")
-time.sleep(2)
+    # Click the "Next" button after entering the username
+    print("Clicking 'Next' button after entering username...")
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "identifierNext"))).click()
 
-# Clicks on the 'Next' button again and waits for 2 seconds.
-driver.find_element(By.XPATH, "//span[text()='Next']").click()
-time.sleep(2)
+    # Wait for the password field to be present and enter the password
+    print("Waiting for password field to be present...")
+    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.NAME, "password")))
+    driver.find_element(By.NAME, "password").send_keys(password)
+    print("Entered password.")
 
-# Uncomment below code to close the browser
-# driver.close()
+    # Click the "Next" button after entering the password
+    print("Clicking 'Next' button after entering password...")
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "passwordNext"))).click()
+
+    print("Logged in successfully.")
+
+except TimeoutException as e:
+    print(f"Timeout occurred: {e}")
+except NoSuchElementException as e:
+    print(f"Element not found: {e}")
+except Exception as e:
+    print(f"An unexpected error occurred: {e}")
