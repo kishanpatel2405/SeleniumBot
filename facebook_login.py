@@ -1,33 +1,59 @@
-from selenium import webdriver
-from selenium.webdriver import Keys
+import json
+from pathlib import Path
+
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.common.by import By
-import time
+from selenium import webdriver
 
-# Set up the WebDriver with an increased timeout
-service = Service(ChromeDriverManager().install())
-driver = webdriver.Chrome(service=service)
 
-# Open Facebook login page
-driver.get("https://www.facebook.com/")
+class SeleniumDriver(object):
+    def __init__(
+            self,
+            driver_path='chromedriver.exe',  # chromedriver path
+            cookies_file_path='cookies/cookies.txt',
+            website="https://facebook.com"
+    ):
+        self.driver_path = Path(driver_path).as_posix()
+        self.cookies_file_path = Path(cookies_file_path).as_posix()
+        self.website = website
 
-# Wait for the page to load
-time.sleep(3)
+        # Chrome options setup
+        options = Options()
+        user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36'
+        options.add_argument(f'user-agent={user_agent}')
+        options.add_argument("--disable-notifications")
 
-# Locate the email/phone input field and the password input field
-email_input = driver.find_element(By.ID, "email")
-password_input = driver.find_element(By.ID, "pass")
+        # Use the Service class to specify the driver
+        service = Service(self.driver_path)
 
-# Enter your credentials
-email_input.send_keys("your_email@example.com")  # Replace with your email
-password_input.send_keys("your_password")  # Replace with your password
+        # Initialize the webdriver with the service object
+        self.driver = webdriver.Chrome(service=service, options=options)
 
-# Press the 'Enter' key to submit the login form
-password_input.send_keys(Keys.RETURN)
+        try:
+            # Load cookies for given websites
+            with open(self.cookies_file_path) as cookie_file:
+                cookies = json.load(cookie_file)
+            self.driver.get(self.website)
+            for cookie in cookies:
+                self.driver.add_cookie(cookie)
+            self.driver.refresh()
+        except Exception as e:
+            print(str(e))
+            print("Error loading cookies")
 
-# Wait for the login process to complete (you can also use explicit waits here)
-time.sleep(5)
+    def save_cookies(self):
+        cookies = self.driver.get_cookies()
+        with open(self.cookies_file_path, 'w') as outfile:
+            json.dump(cookies, outfile, indent=4)
 
-# Optional: Close the browser after a few seconds
-driver.quit()
+    def close_all(self):
+        if len(self.driver.window_handles) < 1:
+            return
+        for window_handle in self.driver.window_handles[:]:
+            self.driver.switch_to.window(window_handle)
+            self.driver.close()
+
+    def quit(self):
+        self.save_cookies()
+        self.close_all()
+        self.driver.quit()
