@@ -57,3 +57,14 @@ class SeleniumDriver(object):
         self.save_cookies()
         self.close_all()
         self.driver.quit()
+
+
+
+
+
+
+
+
+
+
+
