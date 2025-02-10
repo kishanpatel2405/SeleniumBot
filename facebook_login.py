@@ -1,9 +1,9 @@
 import json
 from pathlib import Path
 
+from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
-from selenium import webdriver
 
 
 class SeleniumDriver(object):
@@ -57,14 +57,3 @@ class SeleniumDriver(object):
         self.save_cookies()
         self.close_all()
         self.driver.quit()
-
-
-
-
-
-
-
-
-
-
-
