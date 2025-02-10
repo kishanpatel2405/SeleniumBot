@@ -9,7 +9,7 @@ from selenium.webdriver.chrome.service import Service
 class SeleniumDriver(object):
     def __init__(
             self,
-            driver_path='chromedriver.exe',  # chromedriver path
+            driver_path='chromedriver.exe',
             cookies_file_path='cookies/cookies.txt',
             website="https://facebook.com"
     ):
@@ -17,20 +17,16 @@ class SeleniumDriver(object):
         self.cookies_file_path = Path(cookies_file_path).as_posix()
         self.website = website
 
-        # Chrome options setup
         options = Options()
         user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36'
         options.add_argument(f'user-agent={user_agent}')
         options.add_argument("--disable-notifications")
 
-        # Use the Service class to specify the driver
         service = Service(self.driver_path)
 
-        # Initialize the webdriver with the service object
         self.driver = webdriver.Chrome(service=service, options=options)
 
         try:
-            # Load cookies for given websites
             with open(self.cookies_file_path) as cookie_file:
                 cookies = json.load(cookie_file)
             self.driver.get(self.website)
