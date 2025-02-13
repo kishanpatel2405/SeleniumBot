@@ -56,17 +56,3 @@ except NoSuchElementException as e:
     print(f"Element not found: {e}")
 except Exception as e:
     print(f"An unexpected error occurred: {e}")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
