@@ -12,7 +12,6 @@ options.add_experimental_option('detach', True)
 
 url = "https://workspace.google.com/intl/en-US/gmail/"
 
-# Initialize the WebDriver
 driver = webdriver.Chrome(options=options)
 
 try:
@@ -56,18 +55,3 @@ except NoSuchElementException as e:
     print(f"Element not found: {e}")
 except Exception as e:
     print(f"An unexpected error occurred: {e}")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
